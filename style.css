@@ -1,0 +1,199 @@
+/* === Global Styles === */
+body {
+  background-color: black;
+  margin: 0;
+  padding: 0;
+  font-family: Arial, sans-serif;
+  color: white;
+  text-align: center;
+
+  display: flex;
+  flex-direction: column;
+  height: 100vh; /* full viewport */
+}
+
+/* Fonts */
+.anton-regular { font-family: "Anton", sans-serif; }
+.bungee-regular { font-family: "Bungee", sans-serif; }
+.kaisei-opti-regular { font-family: "Kaisei Opti", serif; }
+
+/* Header */
+header {
+  flex: 0 0 auto; /* natural height */
+  z-index: 10;
+}
+
+/* Title */
+h1 {
+  font-family: "Bungee", sans-serif;
+  margin: 10px 0;
+  font-size: 3em;
+  color: #f8c300;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  text-shadow: 2px 2px 4px #000;
+}
+
+/* Play/Restart Button */
+#play {
+  margin: 10px auto;
+  padding: 12px 24px;
+  font-size: 1.2em;
+  background-color: #115ff4;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  display: block;
+  position: relative;
+  z-index: 10;
+}
+
+#play:hover {
+  background-color: #060ce9;
+}
+
+/* Table container fills remaining space */
+.table-container {
+  flex: 1 1 auto; /* fill remaining height */
+  width: 100%;
+  display: flex;
+}
+
+/* Table fills its container */
+table {
+  width: 100%;
+  height: 100%;
+  border-collapse: collapse;
+  table-layout: fixed;
+}
+
+/* Borders */
+table, th, td {
+  border: 5px solid #000;
+  box-sizing: border-box;
+}
+
+/* Header cells */
+th {
+  font-size: 1.5em;
+  font-family: "Archivo Black", sans-serif;
+  transition: 0.3s ease;
+  background-color: #0d49b9;
+  color: #fff;
+  padding: 10px;
+  text-transform: uppercase;
+  text-shadow: 1px 1px 3px #000;
+  text-align: center;
+  vertical-align: middle;
+  cursor: pointer;
+  overflow: hidden;
+}
+
+th:hover{
+  transition: 0.3s ease;
+  background-color: #0b41a5;
+}
+
+th span {
+  display: inline-block;
+  transition: transform 0.3s ease;
+}
+
+th:hover span {
+  transform: scale(1.1);
+}
+
+/* Clue cells */
+td {
+  font-size: 2em;
+  font-family: "Anton", sans-serif;
+  text-align: center;
+  vertical-align: middle;
+  background-color: #0b41a5;
+  color: #ffb600;
+  cursor: pointer;
+  padding: 0;
+  text-shadow: 2px 2px 5px #000;
+  overflow: hidden;
+}
+
+td span {
+  display: inline-block;
+  transition: transform 0.3s ease;
+}
+
+td:hover span {
+  transform: scale(1.1);
+}
+
+/* Keep cell structure when hidden */
+td span.hidden {
+  visibility: hidden; /* keeps cell size */
+}
+
+/* Header row */
+thead tr {
+  height: calc(100% / 6); /* 1 header + 5 clue rows = 6 */
+}
+
+/* Clue rows */
+tbody tr {
+  height: calc(100% / 6);
+}
+
+/* Used clues */
+td.viewed span {
+  visibility: hidden;
+  background-color: #115ff4;
+  cursor: default;
+}
+
+/* === Active Clue Overlay === */
+#active-clue {
+  position: fixed;
+  font-family: "Kaisei Opti", serif;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: #0b41a5;
+  color: whitesmoke;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 3em;
+  font-weight: bold;
+  padding: 40px;
+  box-sizing: border-box;
+  text-align: center;
+  cursor: pointer;
+  z-index: 1000;
+  text-transform: uppercase;
+  text-shadow: 1px 1px 3px #000;
+
+  /* Start hidden and scaled down */
+  transform: scale(0);
+  opacity: 0;
+  transition: transform 0.5s ease, opacity 0.5s ease;
+  pointer-events: none; /* ignore clicks when hidden */
+}
+
+/* Show overlay with smooth expansion */
+#active-clue.active {
+  transform: scale(1);
+  opacity: 1;
+  pointer-events: auto; /* clickable now */
+}
+
+/* Spinner */
+#spinner {
+  font-size: 2em;
+  margin-top: 20px;
+  color: white;
+}
+
+.disabled {
+  display: none;
+}
