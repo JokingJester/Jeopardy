@@ -1,4 +1,15 @@
 document.addEventListener('DOMContentLoaded', function () {
+   const playBtn = document.getElementById("play");
+  const menuScreen = document.querySelector(".menu-screen");
+  const tableContainer = document.querySelector(".table-container");
+
+  playBtn.addEventListener("click", () => {
+    //---Hide the menu---
+    menuScreen.style.display = "none";
+
+    //---Show the grid---
+    tableContainer.classList.remove("hidden");
+  });
   const API_URL = "https://rithm-jeopardy.herokuapp.com/api/"; //URL of API
   const NUMBER_OF_CATEGORIES = 6; 
   const NUMBER_OF_CLUES_PER_CATEGORY = 5; 
@@ -10,25 +21,25 @@ document.addEventListener('DOMContentLoaded', function () {
   let isPlayButtonClickable = true;
   let isAnimating = true;
 
-  const activeClueOverlay = document.getElementById("active-clue"); // overlay element
+  const activeClueOverlay = document.getElementById("active-clue"); // Overlay element
 
   $("#play").on("click", handleClickOfPlay); //Play + Restart button logic
 
   function handleClickOfPlay() { //Function sets up the game board when clicking button
     if (isPlayButtonClickable === true) {
+      document.querySelector(".menu-screen").classList.add("hidden"); 
       setupTheGame();
       isPlayButtonClickable = false;
     }
   }
 
-  async function setupTheGame() {
+  async function setupTheGame() { //Resets categories array, questions remaining variable, and 
     categories = [];
     questionsRemaining = 30;
     $("#spinner").show();
     $("#categories").empty();
     $("#clues").empty();
     $("#active-clue").html("").removeClass("active");
-    $("#play").text("Loading New Game...");
     const categoryIDs = await getCategoryIds();
     for (let id of categoryIDs) {
       const data = await getCategoryData(id);
@@ -36,7 +47,6 @@ document.addEventListener('DOMContentLoaded', function () {
     }
     fillTable(categories);
     $("#spinner").hide();
-    $("#play").hide();
   }
 
   async function getCategoryIds() { //Retrieves
@@ -83,7 +93,6 @@ document.addEventListener('DOMContentLoaded', function () {
         td.addEventListener("click", () => handleClickOfClue(td, clue));
 
         td.appendChild(span);
-        td.id = `category${categoryIndex}-clue${clueIndex}`;
         tr.appendChild(td);
       }
       tableBody.appendChild(tr);
@@ -91,9 +100,6 @@ document.addEventListener('DOMContentLoaded', function () {
   }
 
   function handleClickOfClue(td, clue) {
-    if (activeClueMode != 0) return; //Makes sure player can't click any tiles while their is a question on screen
-
-    
     questionsRemaining--;
     activeClue = clue;
     activeClueMode = 1;
@@ -124,16 +130,26 @@ document.addEventListener('DOMContentLoaded', function () {
     if (activeClueMode === 1) {
       activeClueMode = 2;
       $("#active-clue").html(activeClue.answer);
-    } else if (activeClueMode === 2) {
+    } 
+
+    else if (activeClueMode === 2) {
+      
+      //---Checks if the player finished the game---
+      if (questionsRemaining === 0 && isPlayButtonClickable === false) {
+        isPlayButtonClickable = true;
+        $("#active-clue").html("The End!");
+        return; // We return so then the player has to click the end to go back to the main menu.
+      }
+      
+      //---Displays main menu---
+      else if(questionsRemaining === 0 && isPlayButtonClickable === true){
+        menuScreen.style.display = "flex"; //Shows main menu
+        $("#play").text("Restart the Game!");
+      }
+
+      //---Sets active clue mode to 0 and removes overlay. This returns players to the main menu as well---
       activeClueMode = 0;
       $("#active-clue").html(null).removeClass("active");
-
-      if (questionsRemaining === 0) {
-        isPlayButtonClickable = true;
-        $("#play").text("Restart the Game!");
-        $("#active-clue").html("The End!");
-        $("#play").show();
-      }
     }
   }
 });

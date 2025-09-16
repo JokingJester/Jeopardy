@@ -19,11 +19,11 @@ body {
 
 /* Header */
 header {
-  flex: 0 0 auto; /* natural height */
+  flex: 0 0 auto;
   z-index: 10;
 }
 
-/* Title */
+/* Title (for in-game, not menu) */
 h1 {
   font-family: "Bungee", sans-serif;
   margin: 10px 0;
@@ -34,34 +34,13 @@ h1 {
   text-shadow: 2px 2px 4px #000;
 }
 
-/* Play/Restart Button */
-#play {
-  margin: 10px auto;
-  padding: 12px 24px;
-  font-size: 1.2em;
-  background-color: #115ff4;
-  color: white;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
-  transition: background-color 0.3s;
-  display: block;
-  position: relative;
-  z-index: 10;
-}
-
-#play:hover {
-  background-color: #060ce9;
-}
-
-/* Table container fills remaining space */
+/* === Game Board === */
 .table-container {
-  flex: 1 1 auto; /* fill remaining height */
+  flex: 1 1 auto; 
   width: 100%;
-  display: flex;
+  display: flex; /* only shows after menu is hidden */
 }
 
-/* Table fills its container */
 table {
   width: 100%;
   height: 100%;
@@ -69,13 +48,11 @@ table {
   table-layout: fixed;
 }
 
-/* Borders */
 table, th, td {
   border: 5px solid #000;
   box-sizing: border-box;
 }
 
-/* Header cells */
 th {
   font-size: 1.5em;
   font-family: "Archivo Black", sans-serif;
@@ -90,22 +67,10 @@ th {
   cursor: pointer;
   overflow: hidden;
 }
+th:hover { background-color: #0b41a5; }
+th span { display: inline-block; transition: transform 0.3s ease; }
+th:hover span { transform: scale(1.1); }
 
-th:hover{
-  transition: 0.3s ease;
-  background-color: #0b41a5;
-}
-
-th span {
-  display: inline-block;
-  transition: transform 0.3s ease;
-}
-
-th:hover span {
-  transform: scale(1.1);
-}
-
-/* Clue cells */
 td {
   font-size: 2em;
   font-family: "Anton", sans-serif;
@@ -114,39 +79,19 @@ td {
   background-color: #0b41a5;
   color: #ffb600;
   cursor: pointer;
-  padding: 0;
   text-shadow: 2px 2px 5px #000;
   overflow: hidden;
 }
+td span { display: inline-block; transition: transform 0.3s ease; }
+td:hover span { transform: scale(1.1); }
+td span.hidden { visibility: hidden; }
 
-td span {
-  display: inline-block;
-  transition: transform 0.3s ease;
-}
+/* Row heights */
+thead tr { height: calc(100% / 6); }
+tbody tr { height: calc(100% / 6); }
 
-td:hover span {
-  transform: scale(1.1);
-}
-
-/* Keep cell structure when hidden */
-td span.hidden {
-  visibility: hidden; /* keeps cell size */
-}
-
-/* Header row */
-thead tr {
-  height: calc(100% / 6); /* 1 header + 5 clue rows = 6 */
-}
-
-/* Clue rows */
-tbody tr {
-  height: calc(100% / 6);
-}
-
-/* Used clues */
 td.viewed span {
   visibility: hidden;
-  background-color: #115ff4;
   cursor: default;
 }
 
@@ -172,28 +117,105 @@ td.viewed span {
   z-index: 1000;
   text-transform: uppercase;
   text-shadow: 1px 1px 3px #000;
-
-  /* Start hidden and scaled down */
   transform: scale(0);
   opacity: 0;
   transition: transform 0.5s ease, opacity 0.5s ease;
-  pointer-events: none; /* ignore clicks when hidden */
+  pointer-events: none;
 }
-
-/* Show overlay with smooth expansion */
 #active-clue.active {
   transform: scale(1);
   opacity: 1;
-  pointer-events: auto; /* clickable now */
+  pointer-events: auto;
 }
 
 /* Spinner */
 #spinner {
-  font-size: 2em;
-  margin-top: 20px;
+
+   position: fixed;      /* stays in the same place even if the page scrolls */
+  top: 50%;             /* center vertically */
+  left: 50%;            /* center horizontally */
+  transform: translate(-50%, -50%); /* adjust for exact center */
+  z-index: 1000;        /* make sure it’s on top of everything */
+  display: none;        /* hide by default */
+
+
+  font-size: 10em;
   color: white;
 }
+.disabled { display: none; }
 
-.disabled {
+/* === Jeopardy Menu Screen === */
+.menu-screen {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: radial-gradient(ellipse at center, #061229 0%, #030617 100%);
+  z-index: 2000;
+}
+
+.menu-card {
+  text-align: center;
+  padding: 40px;
+}
+
+/* Fancy glowing title */
+.menu-card h1 {
+  font-size: clamp(88px, 45vw, 180px);
+  font-family: "Bungee", sans-serif;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: #f6c24b;
+  background: linear-gradient(180deg, #f8f540 0%, #ffcf33 40%, #ffee00ea 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  margin-bottom: 40px;
+  text-shadow:
+    0 0 8px rgba(255, 255, 51, 0.4),
+    0 0 16px rgba(255, 255, 51, 0.3);
+}
+
+/* Neon Start Button */
+#play {
+  padding: 35px 48px;
+  font-size: clamp(18px, 2.5vw, 32px);
+  border-radius: 12px;
+  cursor: pointer;
+  text-transform: uppercase;
+  font-weight: 700;
+  color: #23a8ff;
+  background: rgba(35, 168, 255, 0.06);
+  border: 2px solid rgb(71, 181, 255);
+  box-shadow: 0 0 28px rgba(35, 168, 255, 0.2);
+  position: relative;
+  overflow: hidden;
+  transition: all 0.3s ease;
+  z-index: 2000;
+}
+#play::before {
+  content: "";
+  position: absolute;
+  inset: -6px;
+  border-radius: inherit;
+  background: linear-gradient(90deg, rgba(35,168,255,0.4), rgba(35,168,255,0.1));
+  filter: blur(12px);
+  opacity: 0.9;
+  z-index: -1;
+  animation: neonPulse 3s ease-in-out infinite;
+}
+#play:hover {
+  transform: translateY(-3px) scale(1.02);
+  box-shadow: 0 0 48px rgba(35, 168, 255, 0.4);
+}
+
+@keyframes neonPulse {
+  0%, 100% { opacity: 0.9; transform: scale(1); }
+  50% { opacity: 0.6; transform: scale(1.05); }
+}
+
+/* Hide the board until Start is clicked */
+.table-container.hidden {
   display: none;
 }
+
