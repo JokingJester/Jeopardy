@@ -46,7 +46,25 @@ document.addEventListener('DOMContentLoaded', function () {
       categories.push(data);
     }
     fillTable(categories);
+    isAnimating = true;
+    // Animate categories
+     const categoriesEls = document.querySelectorAll(".category");
+     categoriesEls.forEach((cat, index) => {
+      setTimeout(() => {cat.classList.add("animate-in");  
+      }, index * 100); // 100ms delay between each
+});
+
+// Animate clues
+const cluesEls = document.querySelectorAll(".clue");
+cluesEls.forEach((clue, index) => {
+  setTimeout(() => {
+    clue.classList.add("animate-in");
+  }, (categoriesEls.length * 100) + (index * 50)); 
+});
     $("#spinner").hide();
+         setTimeout(() => { //Disables mouse clicks until board reveal animation completes
+    isAnimating = false;
+  }, 2700); // Blocks for 2.7 seconds.
   }
 
   async function getCategoryIds() { //Retrieves
@@ -77,6 +95,7 @@ document.addEventListener('DOMContentLoaded', function () {
     for (let i = 0; i < categories.length; i++) {
       const th = document.createElement("th");
       th.textContent = categories[i].title;
+      th.classList.add("category");
       tableHead.appendChild(th);
     }
 
@@ -91,7 +110,7 @@ document.addEventListener('DOMContentLoaded', function () {
         span.textContent = "$" + (clueIndex + 1) * 200;
         span.style.cursor = "pointer";
         td.addEventListener("click", () => handleClickOfClue(td, clue));
-
+7
         td.appendChild(span);
         tr.appendChild(td);
       }
@@ -100,6 +119,8 @@ document.addEventListener('DOMContentLoaded', function () {
   }
 
   function handleClickOfClue(td, clue) {
+    if(isAnimating == true)
+      return;
     questionsRemaining--;
     activeClue = clue;
     activeClueMode = 1;
